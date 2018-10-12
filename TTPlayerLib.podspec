@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'TTPlayerLib'
   s.version          = '1.0.0'
-  s.summary          = 'A short description of TTPlayerLib.'
+  s.summary          = '基于IJKPlayer，支持直播、点播，搭载本地服务器实现缓冲、缓存减少视频流量，支持点播视频边线边播，支持视频记忆功能'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/claudeli@yeah.net/TTPlayerLib'
+  s.homepage         = 'https://github.com/ClaudeLi/TTPlayerLib'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'claudeli@yeah.net' => 'claudeli@yeah.net' }
-  s.source           = { :git => 'https://github.com/claudeli@yeah.net/TTPlayerLib.git', :tag => s.version.to_s }
+  s.author           = { 'claudeli@yeah.net' => 'ClaudeLi' }
+  s.source           = { :git => 'https://github.com/ClaudeLi/TTPlayerLib.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
