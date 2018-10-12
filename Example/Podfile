@@ -1,0 +1,12 @@
+source 'https://git.coding.net/iliyang/tiaooo-specs.git'
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'TTPlayerLib_Example' do
+  pod 'TTPlayerLib', :path => '../'
+
+  target 'TTPlayerLib_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

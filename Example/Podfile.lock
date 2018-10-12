@@ -1,0 +1,53 @@
+PODS:
+  - CLProgressFPD (1.0.0)
+  - CLTools (1.0.6)
+  - CocoaAsyncSocket (7.6.3)
+  - CocoaLumberjack (3.4.2):
+    - CocoaLumberjack/Default (= 3.4.2)
+    - CocoaLumberjack/Extensions (= 3.4.2)
+  - CocoaLumberjack/Default (3.4.2)
+  - CocoaLumberjack/Extensions (3.4.2):
+    - CocoaLumberjack/Default
+  - IJKFramework (1.0.0)
+  - ksyhttpcache (1.2.4):
+    - CocoaAsyncSocket
+    - CocoaLumberjack
+  - TTAlertKit (1.1.0)
+  - TTPlayerLib (1.0.0):
+    - CLProgressFPD
+    - CLTools
+    - IJKFramework
+    - ksyhttpcache
+    - TTAlertKit
+
+DEPENDENCIES:
+  - TTPlayerLib (from `../`)
+
+SPEC REPOS:
+  https://git.coding.net/iliyang/tiaooo-specs.git:
+    - IJKFramework
+  https://github.com/cocoapods/specs.git:
+    - CLProgressFPD
+    - CLTools
+    - CocoaAsyncSocket
+    - CocoaLumberjack
+    - ksyhttpcache
+    - TTAlertKit
+
+EXTERNAL SOURCES:
+  TTPlayerLib:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  CLProgressFPD: 903f02cdc88f513fdb0de1cc0c9e824d6a678e54
+  CLTools: 70ddee3adcb06519a8299f9650e8a8b6b2b6d7c7
+  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
+  CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
+  IJKFramework: 62474c04bd858478a4975e7dfc8c5e4e1ceb397f
+  ksyhttpcache: b7f7d9b215e74b49deb4b138e59b3d3b80a05f3d
+  TTAlertKit: 89de41415dc71a5e50c9212f5649ad30abb6c4ad
+  TTPlayerLib: 2013185d7e7915dbdcaddd56ec128ce3f172db5c
+
+PODFILE CHECKSUM: 455d555c30ce47eb94b5c8d3b6a43d6c7b89d11b
+
+COCOAPODS: 1.5.3

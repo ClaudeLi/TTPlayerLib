@@ -1,6 +1,6 @@
 # OS X
 .DS_Store
-IJKFramework/IJKMediaFramework.framework
+
 # Xcode
 build/
 *.pbxuser
@@ -35,3 +35,4 @@ Carthage/Build
 # `pod install` in .travis.yml
 #
 # Pods/
+Example/Pods/
