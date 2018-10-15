@@ -1,13 +1,14 @@
 //
-//  TTLocalServer.m
+//  TTPlayerServer.m
 //  TTPlayerLib
 //
 //  Created by ClaudeLi on 2017/4/22.
 //  Copyright © 2017年 ClaudeLi. All rights reserved.
 //
 
-#import "TTLocalServer.h"
+#import "TTPlayerServer.h"
 #import <KSYHTTPCache/KSYHTTPProxyService.h>
+#import <KSYHTTPCache/HTTPCacheDefines.h>
 #import <CLTools/CLTools.h>
 #import "TTPlayerDefaults.h"
 
@@ -18,7 +19,7 @@ static NSString *TTCacheFileName = @"com.caches.videos";
 //static NSInteger maxSingleFileSize = 10 * 1024 * 1024;      // 单位 B
 static long long maxTotalSize  = 500*1024*1024;               // 单位 B
 
-@implementation TTLocalServer
+@implementation TTPlayerServer
 
 + (NSString *)cacheFolderPath{
     static dispatch_once_t one;
@@ -111,7 +112,7 @@ static long long maxTotalSize  = 500*1024*1024;               // 单位 B
 /**
  * 获取缓存区大小 单位:MB
  */
-+ (CGFloat)getCacheRootSize{
++ (double)getCacheRootSize{
     if (!HasServer || TTPlayerStandard.downloading) {
         return 0;
     }
@@ -164,7 +165,7 @@ static long long maxTotalSize  = 500*1024*1024;               // 单位 B
 /**
  * 查询某个url缓存进度
  */
-+ (CGFloat)cachedProgressWith:(NSURL*)url{
++ (double)cachedProgressWith:(NSURL*)url{
     @autoreleasepool {
         if([[KSYHTTPProxyService sharedInstance] isCacheCompleteForUrl:url]){
             return 1;

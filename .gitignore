@@ -18,6 +18,8 @@ profile
 DerivedData
 *.hmap
 *.ipa
+Example/Pods/
+TTPlayerSDK/Pods/
 
 # Bundler
 .bundle
@@ -35,4 +37,3 @@ Carthage/Build
 # `pod install` in .travis.yml
 #
 # Pods/
-Example/Pods/

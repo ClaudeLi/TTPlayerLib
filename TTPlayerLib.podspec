@@ -29,17 +29,23 @@ TODO: Add long description of the pod here.
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
+  s.public_header_files = 'TTPlayerLib/TTPlayerLib.h'
+  s.source_files = 'TTPlayerLib/TTPlayerLib.h'
 
-  s.source_files = 'TTPlayerLib/Classes/**/*.{h,m}'
+  s.vendored_frameworks = 'TTPlayerLib/TTPlayerSDK.framework'
+  s.resource     = 'TTPlayerLib/Assets/TTPlayerSDK.bundle'
+
+  # s.source_files = 'TTPlayerLib/Classes/**/*.{h,m}'
   # s.resource_bundles = {
   #   'TTPlayerLib' => ['TTPlayerLib/Assets/*.png']
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
+    s.dependency 'IJKFramework'
     s.dependency 'ksyhttpcache'
+    s.dependency 'FMDB'
     s.dependency 'CLTools'
     s.dependency 'TTAlertKit'
     s.dependency 'CLProgressFPD'
-    s.dependency 'IJKFramework'
 end

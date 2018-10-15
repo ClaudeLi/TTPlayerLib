@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
+FOUNDATION_EXTERN NSBundle *TTPlayerBundle(void);
+FOUNDATION_EXTERN NSString *TTPlayerString(NSString *key);
 FOUNDATION_EXTERN NSString *TTFormatedTcpSpeed(int64_t bytes);
 
 @class TTPlayerItem;

@@ -7,6 +7,7 @@
 //
 
 #import "TTViewController.h"
+#import <TTPlayerLib/TTPlayerLib.h>
 
 @interface TTViewController ()
 

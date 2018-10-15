@@ -9,14 +9,42 @@
 #import "TTPlayer.h"
 #import <AVFoundation/AVFoundation.h>
 #import <IJKMediaFramework/IJKMediaFramework.h>
-#import <CLProgressFPD/CLProgressFPD.h>
+#import <KSYHTTPCache/HTTPCacheDefines.h>
 #import <CLTools/CLTools.h>
 #import <TTAlertKit/TTAlert.h>
+#import <CLProgressFPD/CLProgressFPD.h>
+#import "TTPlayerDataBase.h"
 #import "TTPlayerItem.h"
-#import "TTLocalServer.h"
+#import "TTPlayerServer.h"
 #import "TTPlayerDefaults.h"
 
-#define TTString(a)   NSLocalizedString(a, nil)
+NSBundle *TTPlayerBundle(){
+    static NSBundle *resourcebundle = nil;
+    if (resourcebundle == nil) {
+        resourcebundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[TTPlayer class]] pathForResource:@"TTPlayerSDK" ofType:@"bundle"]];;
+    }
+    return resourcebundle;
+}
+
+NSString *TTPlayerString(NSString *key){
+    static NSBundle *bundle = nil;
+    if (bundle == nil) {
+        NSString *language = [NSLocale preferredLanguages].firstObject;
+        if ([language hasPrefix:@"en"]) {
+            language = @"en";
+        } else if ([language hasPrefix:@"zh"]) {
+            if ([language rangeOfString:@"Hans"].location != NSNotFound) {
+                language = @"zh-Hans"; // 简体中文
+            } else { // zh-Hant\zh-HK\zh-TW
+                language = @"zh-Hant"; // 繁體中文
+            }
+        } else {
+            language = @"en";
+        }
+        bundle = [NSBundle bundleWithPath:[TTPlayerBundle() pathForResource:language ofType:@"lproj"]];
+    }
+    return [bundle localizedStringForKey:key value:nil table:nil];
+}
 
 NSString *TTFormatedTcpSpeed(int64_t bytes){
     if (bytes <= 0) {
@@ -31,6 +59,8 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
         return [NSString stringWithFormat:@"%ld B/s", (long)bytes_per_sec];
     }
 }
+
+static CGFloat  MinRecordTime = 3.0f;
 
 @interface TTPlayer ()<UIGestureRecognizerDelegate>{
     NSTimer     *_timer;
@@ -188,11 +218,11 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
             return _videoItem;
         }
 //    async:
-        if ([TTLocalServer isRunning]) {
-            _videoItem.playURL = [NSURL URLWithString:[TTLocalServer getProxyUrl:_videoItem.file]];
+        if ([TTPlayerServer isRunning]) {
+            _videoItem.playURL = [NSURL URLWithString:[TTPlayerServer getProxyUrl:_videoItem.file]];
             _videoItem.isLocalServer = YES;
         }else{
-            [TTLocalServer startServer];
+            [TTPlayerServer startServer];
             _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
         }
         _videoItem.isNetVideo = YES;
@@ -340,7 +370,7 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
             seconds = 0;
         }
         if (TTPlayerStandard.currentNetworkStatus == 0) {
-            [TTLocalServer setProxyUrl:_videoItem.file newCache:NO];
+            [TTPlayerServer setProxyUrl:_videoItem.file newCache:NO];
         }
         _player.currentPlaybackTime = seconds;
         if (completionHandler) {
@@ -443,9 +473,31 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
 - (void)movieNaturalSize:(NSNotification*)notification{
     NSLog(@"player videoSize : %@", NSStringFromCGSize(_player.naturalSize));
 }
-
+    
 - (void)moviePlayRotionChanged:(NSNotification*)notification{
     NSLog(@"player videoTheta : %d", [[[notification userInfo] valueForKey:IJKMPMoviePlayerVideoRotionChangedKey] intValue]);
+}
+
+- (void)mediaIsPreparedToPlayDidChange:(NSNotification*)notification {
+    if (_player.isPreparedToPlay) {
+        _canPlay = YES;
+        if (self.playerTotalTimeBlock) {
+            self.playerTotalTimeBlock([self totalTime]);
+        }
+        if (!_videoItem.seekTime) {
+            TTPlayerItem *item = [TTPlayerDB selectWithKey:_videoItem.mainkey];
+            _videoItem.seekTime = item.seekTime;
+        }
+        if (_videoItem.seekTime > MinRecordTime && _videoItem.seekTime < (_player.duration-MinRecordTime)) {
+            [self seekToTime:_videoItem.seekTime];
+            _videoItem.seekTime = -1;
+        }
+        if (_shouldAutoPlay && !_player.isPlaying) {
+            [self play];
+        }
+    }else{
+        NSLog(@"不能播放");
+    }
 }
 
 - (void)loadStateDidChange:(NSNotification*)notification {
@@ -492,7 +544,7 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
                 if (_player.monitor.remoteIp) {
                     if (TTPlayerStandard.currentNetworkStatus == 0) {
                         [self stop];
-                        [self.progressHUD showText:TTString(@"Network Error,Please check the network")];
+                        [self.progressHUD showText:TTPlayerString(@"TTPlayerNetworkError")];
                     }else{
                         _tryReconnection++;
                         if (_tryReconnection == 1) {
@@ -500,7 +552,7 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
                             _videoItem.isLocalServer = NO;
                             [self reloadPlayerWithReconnection:YES];
 #ifdef DEBUG
-                            [self.progressHUD showText:@"尝试第一次重连~"];
+                            [self.progressHUD showText:TTPlayerString(@"TTPlayerFirstReconnection")];
 #endif
                         }else if (_tryReconnection == 2){
                             _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
@@ -508,7 +560,7 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
                             [self reloadPlayerWithReconnection:YES];
                         }else{
                             [self stop];
-                            [self.progressHUD showText:TTString(@"Playback failed,Please try again")];
+                            [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
                         }
                     }
                 }else{
@@ -520,18 +572,18 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
                     }else{
                         if (self) {
                             [self stop];
-                            [self.progressHUD showText:TTString(@"Playback failed,Please try again")];
+                            [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
                         }
                     }
                 }
             }else{
                 if (_tryReconnection>=2) {
-                    [self.progressHUD showText:TTString(@"Playback failed,Please try again")];
+                    [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
                     return;
                 }
                 _tryReconnection++;
                 if (!self.isLive) {
-                    if ([TTLocalServer isRunning]) {
+                    if ([TTPlayerServer isRunning]) {
                         _videoItem.isLocalServer = YES;
                     }
                     _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
@@ -546,24 +598,6 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
         default:
             NSLog(@"playbackPlayBackDidFinish: ???: %d\n", reason);
             break;
-    }
-}
-
-- (void)mediaIsPreparedToPlayDidChange:(NSNotification*)notification {
-    if (_player.isPreparedToPlay) {
-        _canPlay = YES;
-        if (self.playerTotalTimeBlock) {
-            self.playerTotalTimeBlock([self totalTime]);
-        }
-        if (_videoItem.seekTime > 0 && _videoItem.seekTime < _player.duration) {
-            [self seekToTime:_videoItem.seekTime];
-            _videoItem.seekTime = 0;
-        }
-        if (_shouldAutoPlay && !_player.isPlaying) {
-            [self play];
-        }
-    }else{
-        NSLog(@"不能播放");
     }
 }
 
@@ -676,8 +710,8 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
     [self pause];
     __weak __typeof(&*self)weak_self = self;
     [TTAlert alertInView:self
-                   title:TTString(@"Tip")
-                 message:TTString(@"You are currently not WiFi network,sure to continue to play?")
+                   title:TTPlayerString(@"TTPlayerTip")
+                 message:TTPlayerString(@"TTPlayerTipdDesc")
           completeHelper:^(NSInteger clickIndex) {
               if (clickIndex) {
                   TTPlayerStandard.allowToPlay = YES;
@@ -688,11 +722,12 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
                   }
               }else{
                   if (TTPlayerStandard.currentNetworkStatus == 1) {
+                      [weak_self pause];
                       [weak_self stop];
                   }
               }
-          } cancelTitle:TTString(@"Cancel")
-             otherTitles:TTString(@"Continue"), nil];
+          } cancelTitle:TTPlayerString(@"TTPlayerCancel")
+             otherTitles:TTPlayerString(@"TTPlayerContinue"), nil];
     return NO;
 }
 
@@ -740,6 +775,10 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
     if (_player) {
         if (self.playerToStop) {
             self.playerToStop();
+        }
+        if (_videoItem.mainkey) {
+            _videoItem.insetTime = _player.currentPlaybackTime;
+            [TTPlayerDB insertRecordWith:_videoItem];
         }
         [self clear];
     }

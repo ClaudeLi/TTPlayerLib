@@ -1,0 +1,8 @@
+"TTPlayerNetworkError" = "Network Error,Please Check The Network";
+"TTPlayerPlaybackFailed" = "Playback Failed,Please Try Again";
+"TTPlayerFirstReconnection" = "DEBUG:Try The First Reconnection";
+
+"TTPlayerTip" = "Warm Prompt";
+"TTPlayerTipdDesc" = "You Are Currently Not Wi-Fi Network,Sure To Continue To Play?";
+"TTPlayerCancel" = "Cancel";
+"TTPlayerContinue" = "Continue";

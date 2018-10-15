@@ -9,9 +9,10 @@
 #ifndef TTPlayerLib_h
 #define TTPlayerLib_h
 
-#import "TTPlayer.h"
-#import "TTPlayerItem.h"
-#import "TTPlayerDefaults.h"
-#import "TTLocalServer.h"
+#import <TTPlayerSDK/TTPlayer.h>
+#import <TTPlayerSDK/TTPlayerItem.h>
+#import <TTPlayerSDK/TTPlayerDefaults.h>
+#import <TTPlayerSDK/TTPlayerServer.h>
+#import <TTPlayerSDK/TTPlayerDataBase.h>
 
 #endif /* TTPlayerLib_h */

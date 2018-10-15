@@ -7,7 +7,7 @@
 //
 
 #import "TTPlayerDefaults.h"
-#import "TTLocalServer.h"
+#import "TTPlayerServer.h"
 
 static TTPlayerDefaults *manager;
 @implementation TTPlayerDefaults

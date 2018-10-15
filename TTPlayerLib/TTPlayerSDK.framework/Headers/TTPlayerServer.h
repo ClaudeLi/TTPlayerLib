@@ -1,5 +1,5 @@
 //
-//  TTLocalServer.h
+//  TTPlayerServer.h
 //  TTPlayerLib
 //
 //  Created by ClaudeLi on 2017/4/22.
@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <KSYHTTPCache/HTTPCacheDefines.h>
 
-@interface TTLocalServer : NSObject
+@interface TTPlayerServer : NSObject
 
 + (NSString *)cacheFolderPath;
 
@@ -33,7 +32,7 @@
 /**
  * 获取缓存区大小 单位:MB
  */
-+ (CGFloat)getCacheRootSize;
++ (double)getCacheRootSize;
 
 /**
  * 删除缓存区所以文件
@@ -48,6 +47,6 @@
 /**
  * 查询某个url缓存进度
  */
-+ (CGFloat)cachedProgressWith:(NSURL*)url;
++ (double)cachedProgressWith:(NSURL*)url;
 
 @end

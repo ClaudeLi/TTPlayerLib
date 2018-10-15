@@ -1,0 +1,6 @@
+framework module TTPlayerSDK {
+  umbrella header "TTPlayerSDK.h"
+
+  export *
+  module * { export * }
+}
