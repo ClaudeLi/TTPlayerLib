@@ -11,12 +11,20 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 
+``` 基于ijkplayer
+  1.支持直播、点播
+  2.本地服务器实现缓冲、缓存减少视频流量
+  3.支持点播视频边线边播
+  4.支持视频记忆功能
+```
+
 ## Installation
 
 TTPlayerLib is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
+source 'https://git.coding.net/iliyang/tiaooo-specs.git'
 pod 'TTPlayerLib'
 ```
 
