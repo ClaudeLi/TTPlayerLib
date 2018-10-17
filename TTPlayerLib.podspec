@@ -27,13 +27,12 @@ TODO: Add long description of the pod here.
   s.author           = { 'claudeli@yeah.net' => 'ClaudeLi' }
   s.source           = { :git => 'https://github.com/ClaudeLi/TTPlayerLib.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
-  s.ios.deployment_target = '8.0'
   s.public_header_files = 'TTPlayerLib/TTPlayerLib.h'
   s.source_files = 'TTPlayerLib/TTPlayerLib.h'
+  s.ios.deployment_target = '8.0'
 
-  s.vendored_frameworks = 'TTPlayerLib/TTPlayerSDK.framework'
   s.resource     = 'TTPlayerLib/Assets/TTPlayerSDK.bundle'
+  s.vendored_frameworks = 'TTPlayerLib/TTPlayerSDK.framework'
 
   # s.source_files = 'TTPlayerLib/Classes/**/*.{h,m}'
   # s.resource_bundles = {
