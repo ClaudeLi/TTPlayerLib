@@ -776,7 +776,7 @@ static CGFloat  MinRecordTime = 3.0f;
         if (self.playerToStop) {
             self.playerToStop();
         }
-        if (_videoItem.mainkey) {
+        if (_videoItem.mainkey && _player.currentPlaybackTime) {
             _videoItem.insetTime = _player.currentPlaybackTime;
             [TTPlayerDB insertRecordWith:_videoItem];
         }
