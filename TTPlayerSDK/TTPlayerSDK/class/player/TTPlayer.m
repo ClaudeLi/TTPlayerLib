@@ -606,7 +606,7 @@ static CGFloat  MinRecordTime = 3.0f;
         case IJKMPMoviePlaybackStateStopped:
         {
             NSLog(@"IJKMPMoviePlayBackStateDidChange %d: stoped", (int)_player.playbackState);
-            [self removeObservers:NO];
+            [self removeTimer];
         }
             break;
             
