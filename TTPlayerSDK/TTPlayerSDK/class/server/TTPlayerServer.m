@@ -176,12 +176,15 @@ static long long maxTotalSize  = 500*1024*1024;               // 单位 B
                 NSLog(@"%@", error);
             }else{
                 if (array && array.count) {
-                    NSDictionary *dict = array[0];
-                    NSArray<NSValue *> *cachedFragments = dict[CacheFragmentsKey];
-                    long long contentLength = [dict[CacheContentLengthKey] longLongValue];
-                    if (cachedFragments == nil  || cachedFragments.count == 0 || contentLength <= 0) return 0;
-                    NSInteger cacheLength = cachedFragments[0].rangeValue.length;
-                    return cacheLength /(contentLength *1.0);
+                    NSDictionary *userInfo = array[0];
+                    NSArray<NSValue *> *cachedFragments = userInfo[CacheFragmentsKey];
+                    long long contentLength = [userInfo[CacheContentLengthKey] longLongValue];
+                    if (cachedFragments == nil ||
+                        cachedFragments.count <= 0 ||
+                        contentLength <= 0)
+                        return 0;
+                    long long cacheLength = cachedFragments[0].rangeValue.length;
+                    return (float)cacheLength / (float)contentLength;
                 }
             }
             return 0;

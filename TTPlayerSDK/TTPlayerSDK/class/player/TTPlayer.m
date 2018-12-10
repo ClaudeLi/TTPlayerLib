@@ -68,6 +68,7 @@ static CGFloat  MinRecordTime = 3.0f;
     NSInteger   _tryReconnection;
 }
 
+@property (nonatomic, strong) NSURL *URL;
 @property (atomic, retain) IJKFFMoviePlayerController *player;
 @property (nonatomic, strong) IJKFFOptions *options;
 
@@ -205,8 +206,9 @@ static CGFloat  MinRecordTime = 3.0f;
 
 // 将要播放的item
 - (TTPlayerItem *)getVideoItem{
+    _URL = [NSURL URLWithString:_videoItem.file];
     if (self.isLive) {
-        _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
+        _videoItem.playURL = _URL;
         _videoItem.isNetVideo = YES;
         return _videoItem;
     }
@@ -221,9 +223,10 @@ static CGFloat  MinRecordTime = 3.0f;
         if ([TTPlayerServer isRunning]) {
             _videoItem.playURL = [NSURL URLWithString:[TTPlayerServer getProxyUrl:_videoItem.file]];
             _videoItem.isLocalServer = YES;
+            _cacheProgress = [TTPlayerServer cachedProgressWith:_URL];
         }else{
             [TTPlayerServer startServer];
-            _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
+            _videoItem.playURL = _URL;
         }
         _videoItem.isNetVideo = YES;
     }
@@ -456,17 +459,20 @@ static CGFloat  MinRecordTime = 3.0f;
     NSLog(@"%@", notification);
 }
 
+#define NSLog(format, ...) printf("\n[%s] %s [in line %d] => %s\n", __TIME__, __FUNCTION__, __LINE__, [[NSString stringWithFormat:format, ## __VA_ARGS__] UTF8String]);
+
 - (void)mediaCacheDidChanged:(NSNotification *)notification {
     NSDictionary *userInfo = notification.userInfo;
     if ([[userInfo[CacheURLKey] lastPathComponent] isEqualToString:[_videoItem.file lastPathComponent]]) {
-        NSArray<NSValue *> *cachedFragments = userInfo[CacheFragmentsKey];
-        long long contentLength = [userInfo[CacheContentLengthKey] longLongValue];
-        if (cachedFragments == nil ||
-            cachedFragments.count <= 0 ||
-            contentLength <= 0)
-            return;
-        long long cacheLength = cachedFragments[0].rangeValue.length;
-        _cacheProgress = (float)cacheLength / (float)contentLength;
+//        NSArray<NSValue *> *cachedFragments = userInfo[CacheFragmentsKey];
+//        long long contentLength = [userInfo[CacheContentLengthKey] longLongValue];
+//        if (cachedFragments == nil ||
+//            cachedFragments.count <= 0 ||
+//            contentLength <= 0)
+//            return;
+//        long long cacheLength = cachedFragments[0].rangeValue.length;
+//        _cacheProgress = (float)cacheLength / (float)contentLength;
+        _cacheProgress = [userInfo[CacheProgressKey] floatValue];
     }
 }
 
@@ -548,14 +554,14 @@ static CGFloat  MinRecordTime = 3.0f;
                     }else{
                         _tryReconnection++;
                         if (_tryReconnection == 1) {
-                            _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
+                            _videoItem.playURL = _URL;
                             _videoItem.isLocalServer = NO;
                             [self reloadPlayerWithReconnection:YES];
 #ifdef DEBUG
                             [self.progressHUD showText:TTPlayerString(@"TTPlayerFirstReconnection")];
 #endif
                         }else if (_tryReconnection == 2){
-                            _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
+                            _videoItem.playURL = _URL;
                             _videoItem.isLocalServer = NO;
                             [self reloadPlayerWithReconnection:YES];
                         }else{
@@ -566,7 +572,7 @@ static CGFloat  MinRecordTime = 3.0f;
                 }else{
                     if (_tryReconnection < 2){
                         _tryReconnection = 2;
-                        _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
+                        _videoItem.playURL = _URL;
                         _videoItem.isLocalServer = NO;
                         [self reloadPlayerWithReconnection:YES];
                     }else{
@@ -583,10 +589,7 @@ static CGFloat  MinRecordTime = 3.0f;
                 }
                 _tryReconnection++;
                 if (!self.isLive) {
-                    if ([TTPlayerServer isRunning]) {
-                        _videoItem.isLocalServer = YES;
-                    }
-                    _videoItem.playURL = [NSURL URLWithString:_videoItem.file];
+                    _videoItem.playURL = _URL;
                     _videoItem.isLocalServer = NO;
                 }
                 _videoItem.isNetVideo = YES;
