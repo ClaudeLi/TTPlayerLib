@@ -8,7 +8,7 @@
 
 #import "TTPlayer.h"
 #import <AVFoundation/AVFoundation.h>
-#import <IJKMediaFramework/IJKMediaFramework.h>
+#import <IJKMediaFrameworkWithSSL/IJKMediaFrameworkWithSSL.h>
 #import <KSYHTTPCache/HTTPCacheDefines.h>
 #import <CLTools/CLTools.h>
 #import <TTAlertKit/TTAlert.h>
@@ -18,7 +18,9 @@
 #import "TTPlayerServer.h"
 #import "TTPlayerDefaults.h"
 
-NSBundle *TTPlayerBundle(){
+#define NSLog(format, ...) printf("\n[%s] %s [in line %d] => %s\n", __TIME__, __FUNCTION__, __LINE__, [[NSString stringWithFormat:format, ## __VA_ARGS__] UTF8String]);
+
+NSBundle *TTPlayerBundle() {
     static NSBundle *resourcebundle = nil;
     if (resourcebundle == nil) {
         resourcebundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[TTPlayer class]] pathForResource:@"TTPlayerSDK" ofType:@"bundle"]];;
@@ -26,7 +28,7 @@ NSBundle *TTPlayerBundle(){
     return resourcebundle;
 }
 
-NSString *TTPlayerString(NSString *key){
+NSString *TTPlayerString(NSString *key) {
     static NSBundle *bundle = nil;
     if (bundle == nil) {
         NSString *language = [NSLocale preferredLanguages].firstObject;
@@ -46,7 +48,7 @@ NSString *TTPlayerString(NSString *key){
     return [bundle localizedStringForKey:key value:nil table:nil];
 }
 
-NSString *TTFormatedTcpSpeed(int64_t bytes){
+NSString *TTFormatedTcpSpeed(int64_t bytes) {
     if (bytes <= 0) {
         return @"0.0 B/s";
     }
@@ -62,7 +64,7 @@ NSString *TTFormatedTcpSpeed(int64_t bytes){
 
 static CGFloat  MinRecordTime = 3.0f;
 
-@interface TTPlayer ()<UIGestureRecognizerDelegate>{
+@interface TTPlayer ()<UIGestureRecognizerDelegate> {
     NSTimer     *_timer;
     float       _cacheProgress;
     NSInteger   _tryReconnection;
@@ -86,7 +88,7 @@ static CGFloat  MinRecordTime = 3.0f;
 
 @implementation TTPlayer
 
-- (instancetype)init{
+- (instancetype)init {
     self = [super init];
     if (self) {
         [self _setUp];
@@ -94,7 +96,7 @@ static CGFloat  MinRecordTime = 3.0f;
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame{
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         [self _setUp];
@@ -102,16 +104,16 @@ static CGFloat  MinRecordTime = 3.0f;
     return self;
 }
 
-- (void)_setUp{
+- (void)_setUp {
     _rate = 1;
     self.contentMode = UIViewContentModeScaleAspectFit;
 }
 
-- (BOOL)isLive{
+- (BOOL)isLive {
     return _videoItem.isLive;
 }
 
-- (CLProgressFPD *)progressHUD{
+- (CLProgressFPD *)progressHUD {
     if (!_progressHUD) {
         _progressHUD = [[CLProgressFPD alloc] init];
         [self addSubview:_progressHUD];
@@ -119,7 +121,7 @@ static CGFloat  MinRecordTime = 3.0f;
     return _progressHUD;
 }
 
-- (IJKFFOptions *)options{
+- (IJKFFOptions *)options {
     if (!_options) {
         _options = [IJKFFOptions optionsByDefault];
         [IJKFFMoviePlayerController checkIfFFmpegVersionMatch:YES];
@@ -149,7 +151,7 @@ static CGFloat  MinRecordTime = 3.0f;
             [_options setFormatOptionIntValue:1          forKey:@"no-time-adjust"];
             [_options setFormatOptionIntValue:1000       forKey:@"analyzeduration"];
             [_options setFormatOptionValue:@"nobuffer"   forKey:@"fflags"];
-        }else{
+        } else {
             // 精确定位
             [_options setOptionIntValue:1   forKey:@"enable-accurate-seek" ofCategory:kIJKFFOptionCategoryPlayer];
 //            [_options setPlayerOptionIntValue:15 * 1024 * 1024   forKey:@"max-buffer-size"];
@@ -170,20 +172,20 @@ static CGFloat  MinRecordTime = 3.0f;
     return _options;
 }
 
-- (void)layoutSubviews{
+- (void)layoutSubviews {
     [super layoutSubviews];
     _player.view.frame = self.bounds;
     _player.view.center = self.center;
 }
 
-- (void)setRate:(CGFloat)rate{
+- (void)setRate:(CGFloat)rate {
     _rate = rate;
     if (_player) {
         _player.playbackRate = rate;
     }
 }
 
-- (void)playWithItem:(TTPlayerItem *)item autoPlay:(BOOL)autoPlay{
+- (void)playWithItem:(TTPlayerItem *)item autoPlay:(BOOL)autoPlay {
     if (!item) {
         return;
     }
@@ -193,7 +195,7 @@ static CGFloat  MinRecordTime = 3.0f;
     [self load];
 }
 
-- (void)load{
+- (void)load {
     _canPlay = NO;
     _tryReconnection = 0;
     _videoItem = [self getVideoItem];
@@ -205,7 +207,7 @@ static CGFloat  MinRecordTime = 3.0f;
 }
 
 // 将要播放的item
-- (TTPlayerItem *)getVideoItem{
+- (TTPlayerItem *)getVideoItem {
     _URL = [NSURL URLWithString:_videoItem.file];
     if (self.isLive) {
         _videoItem.playURL = _URL;
@@ -215,7 +217,7 @@ static CGFloat  MinRecordTime = 3.0f;
     BOOL exist = exist = [[NSFileManager defaultManager] fileExistsAtPath:_videoItem.filePath];
     if (exist) {
         _videoItem.playURL = [NSURL fileURLWithPath:_videoItem.filePath];
-    }else {
+    } else {
         if ([NSString isNilOrEmptyString:_videoItem.file]) {
             return _videoItem;
         }
@@ -224,7 +226,7 @@ static CGFloat  MinRecordTime = 3.0f;
             _videoItem.playURL = [NSURL URLWithString:[TTPlayerServer getProxyUrl:_videoItem.file]];
             _videoItem.isLocalServer = YES;
             _cacheProgress = [TTPlayerServer cachedProgressWith:_URL];
-        }else{
+        } else {
             [TTPlayerServer startServer];
             _videoItem.playURL = _URL;
         }
@@ -233,7 +235,7 @@ static CGFloat  MinRecordTime = 3.0f;
     return _videoItem;
 }
 
-- (void)reloadPlayerWithReconnection:(BOOL)reconnection{
+- (void)reloadPlayerWithReconnection:(BOOL)reconnection {
     if (self.playerDelayPlay) {
         self.playerDelayPlay(YES);
     }
@@ -250,7 +252,7 @@ static CGFloat  MinRecordTime = 3.0f;
         if (self.playerToChangedPlayer) {
             self.playerToChangedPlayer();
         }
-    }else{
+    } else {
         _player = [[IJKFFMoviePlayerController alloc] initWithContentURL:_videoItem.playURL withOptions:self.options];
     }
     _player.view.frame = self.bounds;
@@ -277,7 +279,7 @@ static CGFloat  MinRecordTime = 3.0f;
         if ([_player isKindOfClass:[IJKFFMoviePlayerController class]]) {
             _player.shouldShowHudView = YES;
         }
-    }else{
+    } else {
         [IJKFFMoviePlayerController setLogReport:NO];
         [IJKFFMoviePlayerController setLogLevel:k_IJK_LOG_ERROR];
     }
@@ -287,7 +289,7 @@ static CGFloat  MinRecordTime = 3.0f;
 #endif
 }
 
-- (void)play{
+- (void)play {
     if (![[AVAudioSession sharedInstance].category isEqualToString:AVAudioSessionCategoryPlayback]) {
         NSError *audioSessionError;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:&audioSessionError];
@@ -300,7 +302,7 @@ static CGFloat  MinRecordTime = 3.0f;
             [_player prepareToPlay];
             [_player play];
         }
-    }else{
+    } else {
         if (_videoItem &&
             [_videoItem isKindOfClass:[TTPlayerItem class]]) {
             [self playWithItem:_videoItem autoPlay:YES];
@@ -321,7 +323,7 @@ static CGFloat  MinRecordTime = 3.0f;
     }
 }
 
-- (void)stop{
+- (void)stop {
     if ([[AVAudioSession sharedInstance].category isEqualToString:AVAudioSessionCategoryPlayback]) {
         NSError *audioSessionError;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&audioSessionError];
@@ -346,14 +348,14 @@ static CGFloat  MinRecordTime = 3.0f;
     return 0.0f;
 }
 
-- (BOOL)isPlaying{
+- (BOOL)isPlaying {
     if (_player) {
         return _player.isPlaying;
     }
     return NO;
 }
 
-- (int64_t)tcpSpeed{
+- (int64_t)tcpSpeed {
     if (_player &&
         [_player isKindOfClass:[IJKFFMoviePlayerController class]]) {
         return [_player tcpSpeed];
@@ -361,7 +363,7 @@ static CGFloat  MinRecordTime = 3.0f;
     return 0;
 }
 
-- (void)seekToTime:(float)seconds{
+- (void)seekToTime:(float)seconds {
     [self seekToTime:seconds completionHandler:nil];
 }
 
@@ -369,7 +371,7 @@ static CGFloat  MinRecordTime = 3.0f;
     if (_canPlay && !self.isLive) {
         if (seconds >= (_player.duration-0.2)) {
             seconds = _player.duration-0.2;
-        }else if (seconds <= 0){
+        } else if (seconds <= 0) {
             seconds = 0;
         }
         if (TTPlayerStandard.currentNetworkStatus == 0) {
@@ -382,7 +384,7 @@ static CGFloat  MinRecordTime = 3.0f;
     }
 }
 
-- (void)setLayerTransform:(CATransform3D)layerTransform{
+- (void)setLayerTransform:(CATransform3D)layerTransform {
     _layerTransform = layerTransform;
     __weak __typeof(&*self)weak_self = self;
     [UIView animateWithDuration:0.4 animations:^{
@@ -390,17 +392,17 @@ static CGFloat  MinRecordTime = 3.0f;
     }];
 }
 
-- (void)setLayerTransform:(CATransform3D)layerTransform animation:(BOOL)animation{
+- (void)setLayerTransform:(CATransform3D)layerTransform animation:(BOOL)animation {
     if (animation) {
         self.layerTransform = layerTransform;
-    }else{
+    } else {
         self.layer.transform = layerTransform;
     }
 }
 
 #pragma mark -
 #pragma mark -- installMovieNotificationObservers --
-- (void)installMovieNotificationObservers{
+- (void)installMovieNotificationObservers {
     // 前后台通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterForegroundNotification) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resignActiveNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -438,49 +440,39 @@ static CGFloat  MinRecordTime = 3.0f;
 }
 #pragma mark -
 #pragma mark -- Notifications function --
-- (void)enterForegroundNotification{
+- (void)enterForegroundNotification {
     if (_shouldPlay) {
         [self play];
-    }else{
+    } else {
         [self pause];
     }
 }
 
-- (void)resignActiveNotification{
+- (void)resignActiveNotification {
     if (_timer) {
         _shouldPlay = YES;
         [self pause];
-    }else{
+    } else {
         _shouldPlay = NO;
     }
 }
 
-- (void)mediaCacheDidError:(NSNotification *)notification{
+- (void)mediaCacheDidError:(NSNotification *)notification {
     NSLog(@"%@", notification);
 }
-
-#define NSLog(format, ...) printf("\n[%s] %s [in line %d] => %s\n", __TIME__, __FUNCTION__, __LINE__, [[NSString stringWithFormat:format, ## __VA_ARGS__] UTF8String]);
 
 - (void)mediaCacheDidChanged:(NSNotification *)notification {
     NSDictionary *userInfo = notification.userInfo;
     if ([[userInfo[CacheURLKey] lastPathComponent] isEqualToString:[_videoItem.file lastPathComponent]]) {
-//        NSArray<NSValue *> *cachedFragments = userInfo[CacheFragmentsKey];
-//        long long contentLength = [userInfo[CacheContentLengthKey] longLongValue];
-//        if (cachedFragments == nil ||
-//            cachedFragments.count <= 0 ||
-//            contentLength <= 0)
-//            return;
-//        long long cacheLength = cachedFragments[0].rangeValue.length;
-//        _cacheProgress = (float)cacheLength / (float)contentLength;
         _cacheProgress = [userInfo[CacheProgressKey] floatValue];
     }
 }
 
-- (void)movieNaturalSize:(NSNotification*)notification{
+- (void)movieNaturalSize:(NSNotification*)notification {
     NSLog(@"player videoSize : %@", NSStringFromCGSize(_player.naturalSize));
 }
     
-- (void)moviePlayRotionChanged:(NSNotification*)notification{
+- (void)moviePlayRotionChanged:(NSNotification*)notification {
     NSLog(@"player videoTheta : %d", [[[notification userInfo] valueForKey:IJKMPMoviePlayerVideoRotionChangedKey] intValue]);
 }
 
@@ -512,7 +504,7 @@ static CGFloat  MinRecordTime = 3.0f;
         if (self.playerDelayPlay) {
             self.playerDelayPlay(NO);
         }
-    }else if ((loadState & IJKMPMovieLoadStateStalled) != 0) {
+    } else if ((loadState & IJKMPMovieLoadStateStalled) != 0) {
         [self removeTimer];
         if (self.playerDelayPlay) {
             self.playerDelayPlay(YES);
@@ -547,42 +539,47 @@ static CGFloat  MinRecordTime = 3.0f;
             if (_videoItem.isNetVideo &&
                 !self.isLive &&
                 [_player isKindOfClass:[IJKFFMoviePlayerController class]]) {
-                if (_player.monitor.remoteIp) {
-                    if (TTPlayerStandard.currentNetworkStatus == 0) {
-                        [self stop];
-                        [self.progressHUD showText:TTPlayerString(@"TTPlayerNetworkError")];
-                    }else{
-                        _tryReconnection++;
-                        if (_tryReconnection == 1) {
-                            _videoItem.playURL = _URL;
-                            _videoItem.isLocalServer = NO;
-                            [self reloadPlayerWithReconnection:YES];
+                if (@available(iOS 10.0, *)) {
+                    if (_player.monitor.remoteIp) {
+                        if (TTPlayerStandard.currentNetworkStatus == 0) {
+                            [self stop];
+                            [self.progressHUD showText:TTPlayerString(@"TTPlayerNetworkError")];
+                        } else {
+                            _tryReconnection++;
+                            if (_tryReconnection == 1) {
+                                _videoItem.playURL = _URL;
+                                _videoItem.isLocalServer = NO;
+                                [self reloadPlayerWithReconnection:YES];
 #ifdef DEBUG
-                            [self.progressHUD showText:TTPlayerString(@"TTPlayerFirstReconnection")];
+                                [self.progressHUD showText:TTPlayerString(@"TTPlayerFirstReconnection")];
 #endif
-                        }else if (_tryReconnection == 2){
+                            } else if (_tryReconnection == 2) {
+                                _videoItem.playURL = _URL;
+                                _videoItem.isLocalServer = NO;
+                                [self reloadPlayerWithReconnection:YES];
+                            } else {
+                                [self stop];
+                                [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
+                            }
+                        }
+                    } else {
+                        if (_tryReconnection < 2){
+                            _tryReconnection = 2;
                             _videoItem.playURL = _URL;
                             _videoItem.isLocalServer = NO;
                             [self reloadPlayerWithReconnection:YES];
-                        }else{
-                            [self stop];
-                            [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
+                        } else {
+                            if (self) {
+                                [self stop];
+                                [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
+                            }
                         }
                     }
-                }else{
-                    if (_tryReconnection < 2){
-                        _tryReconnection = 2;
-                        _videoItem.playURL = _URL;
-                        _videoItem.isLocalServer = NO;
-                        [self reloadPlayerWithReconnection:YES];
-                    }else{
-                        if (self) {
-                            [self stop];
-                            [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
-                        }
-                    }
+                } else {
+                    [self stop];
+                    [self.progressHUD showText:TTPlayerString(@"TTPlayerNetworkError")];
                 }
-            }else{
+            } else {
                 if (_tryReconnection>=2) {
                     [self.progressHUD showText:TTPlayerString(@"TTPlayerPlaybackFailed")];
                     return;
@@ -662,7 +659,7 @@ static CGFloat  MinRecordTime = 3.0f;
 
 #pragma mark -
 #pragma mark -- update --
-- (void)update{
+- (void)update {
     if (_player) {
         if (![[AVAudioSession sharedInstance].category isEqualToString:AVAudioSessionCategoryPlayback]) {
             NSError *audioSessionError;
@@ -686,10 +683,10 @@ static CGFloat  MinRecordTime = 3.0f;
                 if (_videoItem.isNetVideo) {
                     if (_videoItem.isLocalServer) {
                         self.playerLoadedTimeBlock(_cacheProgress);
-                    }else{
+                    } else {
                         self.playerLoadedTimeBlock((CGFloat)_player.playableDuration/(_player.duration * 1.0));
                     }
-                }else{
+                } else {
                     self.playerLoadedTimeBlock(1);
                 }
             }
@@ -697,7 +694,7 @@ static CGFloat  MinRecordTime = 3.0f;
     }
 }
 
-- (BOOL)judgeNetworkCanPlay{
+- (BOOL)judgeNetworkCanPlay {
     if (!_videoItem.isNetVideo) {
         return YES;
     }
@@ -774,7 +771,7 @@ static CGFloat  MinRecordTime = 3.0f;
 
 #pragma mark -
 #pragma mark -- removePlayerObserver --
-- (void)removeObservers:(BOOL)reconnection{
+- (void)removeObservers:(BOOL)reconnection {
     if (_player) {
         if (self.playerToStop) {
             self.playerToStop();
@@ -787,7 +784,7 @@ static CGFloat  MinRecordTime = 3.0f;
     }
 }
 
-- (void)clear{
+- (void)clear {
     [self removeMovieNotificationObservers];
     [self removeTimer];
     [self.player stop];
@@ -800,7 +797,7 @@ static CGFloat  MinRecordTime = 3.0f;
     _options = nil;
 }
 
-- (void)removeTimer{
+- (void)removeTimer {
     if ([UIApplication sharedApplication].idleTimerDisabled) {
         [UIApplication sharedApplication].idleTimerDisabled = NO;
     }
@@ -810,7 +807,7 @@ static CGFloat  MinRecordTime = 3.0f;
     }
 }
 
-- (void)dealloc{
+- (void)dealloc {
     if (_player) {
         [self clear];
     }

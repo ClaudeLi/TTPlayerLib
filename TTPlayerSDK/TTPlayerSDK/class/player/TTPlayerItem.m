@@ -10,7 +10,7 @@
 
 @implementation TTPlayerItem
 
-- (NSString *)filePath{
+- (NSString *)filePath {
     return nil;
 }
 

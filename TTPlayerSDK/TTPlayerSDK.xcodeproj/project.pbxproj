@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7237C1A41D5CF33B37D58788 /* libPods-TTPlayerSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F3401E4ACF33C13955234EC /* libPods-TTPlayerSDK.a */; };
 		D336233A2174A03E0016EC5B /* TTPlayerSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = D33623382174A03E0016EC5B /* TTPlayerSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D336234E2174A12B0016EC5B /* TTPlayerDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = D33623422174A12B0016EC5B /* TTPlayerDataBase.m */; };
 		D336234F2174A12B0016EC5B /* TTPlayerDataBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D33623432174A12B0016EC5B /* TTPlayerDataBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -53,6 +54,7 @@
 				D336235D2174A3F50016EC5B /* libz.tbd in Frameworks */,
 				D336235B2174A3C90016EC5B /* libbz2.tbd in Frameworks */,
 				D33623592174A3B20016EC5B /* libc++.tbd in Frameworks */,
+				7237C1A41D5CF33B37D58788 /* libPods-TTPlayerSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

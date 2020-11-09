@@ -7,7 +7,7 @@
 //
 
 #import "TTPlayerDataBase.h"
-#import <FMDB/FMDB.h>
+#import <fmdb/FMDB.h>
 #import "TTPlayerItem.h"
 
 #define TTPlayerTable   @"tt_player"

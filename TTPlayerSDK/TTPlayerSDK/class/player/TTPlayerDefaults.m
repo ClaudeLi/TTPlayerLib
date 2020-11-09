@@ -12,7 +12,7 @@
 static TTPlayerDefaults *manager;
 @implementation TTPlayerDefaults
 
-+ (TTPlayerDefaults *)standardDefaults{
++ (TTPlayerDefaults *)standardDefaults {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[TTPlayerDefaults alloc] init];

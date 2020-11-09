@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TTPlayerLib'
-  s.version          = '1.1.2'
+  s.version          = '1.2.0'
   s.summary          = '基于IJKPlayer，支持直播、点播，搭载本地服务器实现缓冲、缓存减少视频流量，支持点播视频边线边播，支持视频记忆功能'
 
 # This description is used to generate tags and improve search results.
@@ -41,7 +41,7 @@ TODO: Add long description of the pod here.
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-    s.dependency 'IJKFramework'
+    s.dependency 'IJKPlayerWithSSL'
     s.dependency 'ksyhttpcache'
     s.dependency 'FMDB'
     s.dependency 'CLTools'

@@ -1,11 +1,10 @@
-source 'https://git.coding.net/iliyang/tiaooo-specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'TTPlayerSDK' do
-  	pod 'IJKFramework'
-	pod 'ksyhttpcache'
-	pod 'FMDB'
+  	pod 'IJKPlayerWithSSL'
+    pod 'ksyhttpcache'
+    pod 'FMDB'
   	pod 'TTAlertKit'
-	pod 'CLTools'
-	pod 'CLProgressFPD'
+    pod 'CLTools'
+    pod 'CLProgressFPD'
 end

@@ -51,7 +51,7 @@
 /* Begin PBXFileReference section */
 		39AB8FD1BF185BD7C83C7F70 /* libPods-TTPlayerLib_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TTPlayerLib_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B06723ADD53F5159814E3A3 /* Pods-TTPlayerLib_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TTPlayerLib_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example.release.xcconfig"; sourceTree = "<group>"; };
-		4F5CE51F272D082CA18AB43A /* TTPlayerLib.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = TTPlayerLib.podspec; path = ../TTPlayerLib.podspec; sourceTree = "<group>"; };
+		4F5CE51F272D082CA18AB43A /* TTPlayerLib.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = TTPlayerLib.podspec; path = ../TTPlayerLib.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		55B8E768F553A1FA482ABA49 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* TTPlayerLib_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TTPlayerLib_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -256,6 +256,7 @@
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
 				5B39DB96460049EB00112C39 /* [CP] Copy Pods Resources */,
+				0B744C78C8EAC39F451526CC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -305,6 +306,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -342,13 +344,31 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0B744C78C8EAC39F451526CC /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example-frameworks.sh",
+				"${PODS_ROOT}/IJKPlayerWithSSL/IJKMediaFrameworkWithSSL.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IJKMediaFrameworkWithSSL.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		5B39DB96460049EB00112C39 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example-resources.sh",
 				"${PODS_ROOT}/../../TTPlayerLib/Assets/TTPlayerSDK.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -357,7 +377,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TTPlayerLib_Example/Pods-TTPlayerLib_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9BF4A823540AA5976CAE3972 /* [CP] Check Pods Manifest.lock */ = {
