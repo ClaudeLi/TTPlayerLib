@@ -24,8 +24,7 @@ TTPlayerLib is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-source 'https://git.coding.net/iliyang/tiaooo-specs.git'
-pod 'TTPlayerLib'
+pod 'TTPlayerLib', '~> 1.2.0'
 ```
 
 ## Author
